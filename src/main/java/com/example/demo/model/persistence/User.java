@@ -1,5 +1,7 @@
 package com.example.demo.model.persistence;
 
+import java.security.SecureRandom;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -70,5 +72,13 @@ public class User {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	// private static
+	public byte[] createSalt() {
+		SecureRandom random = new SecureRandom();
+		byte[] salt = new byte[16];
+		random.nextBytes(salt);
+		return salt;
 	}
 }

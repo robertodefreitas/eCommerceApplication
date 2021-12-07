@@ -67,6 +67,15 @@ public class UserController {
 		}
 		user.setPassword(bCryptPasswordEncoder.encode(createUserRequest.getPassword()));
 
+		/**
+		 * Created to see the values
+		 * robertodefreitas
+		 */
+		System.out.println("### user.getUsername: " + user.getUsername());
+		System.out.println("### createUserRequest.getPassword: " + createUserRequest.getPassword());
+		System.out.println("### user.getPassword: " + user.getPassword());
+		System.out.println("### user.createSalt: " + user.createSalt());
+
 		userRepository.save(user);
 		return ResponseEntity.ok(user);
 	}
