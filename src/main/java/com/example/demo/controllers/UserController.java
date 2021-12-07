@@ -69,32 +69,9 @@ public class UserController {
 			return ResponseEntity.badRequest().build();
 		}
 
-
-		// Method to generate the hash.
-		//It takes a password and the Salt as input arguments
-		String generatedPassword = null;
-		try {
-			MessageDigest md = MessageDigest.getInstance("SHA-256");
-
-			//md.update(user.createSalt());
-			user.setSalt();
-			md.update(Base64.getDecoder().decode(user.getSalt()));
-
-			byte[] bytes = md.digest(createUserRequest.getPassword().getBytes());
-			StringBuilder sb = new StringBuilder();
-			for(int i=0; i< bytes.length ;i++)
-			{
-				sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
-			}
-			generatedPassword = sb.toString();
-		}
-		catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-
-		user.setPassword(generatedPassword);
-
-		//user.setPassword(bCryptPasswordEncoder.encode(createUserRequest.getPassword()));
+		// bCrypt hash work with salt and the cipher text (password)
+		// https://stackoverflow.com/questions/6832445/how-can-bcrypt-have-built-in-salts
+		user.setPassword(bCryptPasswordEncoder.encode(createUserRequest.getPassword()));
 
 		/**
 		 * Created to see the values
@@ -103,7 +80,6 @@ public class UserController {
 		System.out.println("### user.getUsername: " + user.getUsername());
 		System.out.println("### createUserRequest.getPassword: " + createUserRequest.getPassword());
 		System.out.println("### user.getPassword: " + user.getPassword());
-		System.out.println("### user.getSalt: " + user.getSalt());
 
 		userRepository.save(user);
 		return ResponseEntity.ok(user);
