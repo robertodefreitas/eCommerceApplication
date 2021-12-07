@@ -27,14 +27,6 @@ public class User {
 	@JsonProperty
 	private String username;
 
-	/**
-	 * From video ND035 C04 L01 A06.2
-	 * P4-L1-12
-	 */
-	@Column(nullable = false)
-	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-	private String password;
-
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "cart_id", referencedColumnName = "id")
 	@JsonIgnore
@@ -62,13 +54,5 @@ public class User {
 
 	public void setUsername(String username) {
 		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 }

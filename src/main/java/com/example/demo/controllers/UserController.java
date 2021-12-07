@@ -30,13 +30,6 @@ public class UserController {
 	@Autowired
 	private CartRepository cartRepository;
 
-	/**
-	 * From video ND035 C04 L01 A06.2
-	 * P4-L1-12
-	 */
-	@Autowired
-	private BCryptPasswordEncoder bCryptPasswordEncoder;
-
 	@GetMapping("/id/{id}")
 	public ResponseEntity<User> findById(@PathVariable Long id) {
 		return ResponseEntity.of(userRepository.findById(id));
@@ -55,18 +48,6 @@ public class UserController {
 		Cart cart = new Cart();
 		cartRepository.save(cart);
 		user.setCart(cart);
-
-		/**
-		 * From video ND035 C04 L01 A06.2
-		 * P4-L1-12
-		 */
-		if(createUserRequest.getPassword().length() < 7 ||
-			!createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())){
-			//log.error("Error with user password. Cannot create user {}", createUserRequest.getUsername());
-			return ResponseEntity.badRequest().build();
-		}
-		user.setPassword(bCryptPasswordEncoder.encode(createUserRequest.getPassword()));
-
 		userRepository.save(user);
 		return ResponseEntity.ok(user);
 	}
