@@ -1,10 +1,5 @@
 package com.example.demo.controllers;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +15,8 @@ import com.example.demo.model.persistence.User;
 import com.example.demo.model.persistence.repositories.CartRepository;
 import com.example.demo.model.persistence.repositories.UserRepository;
 import com.example.demo.model.requests.CreateUserRequest;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 @RestController
 @RequestMapping("/api/user")
@@ -37,8 +32,10 @@ public class UserController {
 	 * From video ND035 C04 L01 A06.2
 	 * P4-L1-12
 	 */
+	//@Autowired
+	//private BCryptPasswordEncoder bCryptPasswordEncoder;
 	@Autowired
-	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	private BCrypt bCrypt;
 
 	@GetMapping("/id/{id}")
 	public ResponseEntity<User> findById(@PathVariable Long id) {
@@ -69,9 +66,14 @@ public class UserController {
 			return ResponseEntity.badRequest().build();
 		}
 
-		// bCrypt hash work with salt and the cipher text (password)
-		// https://stackoverflow.com/questions/6832445/how-can-bcrypt-have-built-in-salts
-		user.setPassword(bCryptPasswordEncoder.encode(createUserRequest.getPassword()));
+		/**
+		 * bCrypt hash work with salt and the cipher text (password)
+		 * https://stackoverflow.com/questions/6832445/how-can-bcrypt-have-built-in-salts
+		 */
+		//user.setPassword(bCryptPasswordEncoder.encode(createUserRequest.getPassword()));
+
+		user.setSalt(bCrypt.gensalt());
+		user.setPassword(bCrypt.hashpw(createUserRequest.getPassword(),user.getSalt()));
 
 		/**
 		 * Created to see the values
@@ -80,6 +82,7 @@ public class UserController {
 		System.out.println("### user.getUsername: " + user.getUsername());
 		System.out.println("### createUserRequest.getPassword: " + createUserRequest.getPassword());
 		System.out.println("### user.getPassword: " + user.getPassword());
+		System.out.println("### user.getSalt: " + user.getSalt());
 
 		userRepository.save(user);
 		return ResponseEntity.ok(user);
