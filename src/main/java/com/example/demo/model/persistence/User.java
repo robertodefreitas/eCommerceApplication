@@ -1,6 +1,7 @@
 package com.example.demo.model.persistence;
 
 import java.security.SecureRandom;
+import java.util.Base64;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -36,6 +37,10 @@ public class User {
 	@Column(nullable = false)
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private String password;
+
+	@Column(nullable = false)
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+	private String salt;
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "cart_id", referencedColumnName = "id")
@@ -74,11 +79,21 @@ public class User {
 		this.password = password;
 	}
 
-	// private static
+	// private static byte[]
 	public byte[] createSalt() {
 		SecureRandom random = new SecureRandom();
 		byte[] salt = new byte[16];
 		random.nextBytes(salt);
 		return salt;
+	}
+
+	public String getSalt() {
+		//Base64 Decoded
+		//byte[] bytes = Base64.getDecoder().decode(string);
+		return salt;
+	}
+
+	public void setSalt() {
+		this.salt = Base64.getEncoder().encodeToString(createSalt());
 	}
 }
