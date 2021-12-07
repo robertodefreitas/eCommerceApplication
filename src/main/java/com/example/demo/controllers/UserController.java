@@ -17,6 +17,8 @@ import com.example.demo.model.persistence.User;
 import com.example.demo.model.persistence.repositories.CartRepository;
 import com.example.demo.model.persistence.repositories.UserRepository;
 import com.example.demo.model.requests.CreateUserRequest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 
 @RestController
 @RequestMapping("/api/user")
@@ -27,6 +29,13 @@ public class UserController {
 	
 	@Autowired
 	private CartRepository cartRepository;
+
+	/**
+	 * From video ND035 C04 L01 A06.2
+	 * P4-L1-12
+	 */
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	@GetMapping("/id/{id}")
 	public ResponseEntity<User> findById(@PathVariable Long id) {
@@ -46,6 +55,18 @@ public class UserController {
 		Cart cart = new Cart();
 		cartRepository.save(cart);
 		user.setCart(cart);
+
+		/**
+		 * From video ND035 C04 L01 A06.2
+		 * P4-L1-12
+		 */
+		if(createUserRequest.getPassword().length() < 7 ||
+			!createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())){
+			//log.error("Error with user password. Cannot create user {}", createUserRequest.getUsername());
+			return ResponseEntity.badRequest().build();
+		}
+		user.setPassword(bCryptPasswordEncoder.encode(createUserRequest.getPassword()));
+
 		userRepository.save(user);
 		return ResponseEntity.ok(user);
 	}
