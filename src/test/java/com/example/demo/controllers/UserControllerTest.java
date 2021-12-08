@@ -2,6 +2,8 @@ package com.example.demo.requests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -11,53 +13,62 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import com.example.demo.TestUtils;
 import com.example.demo.controllers.UserController;
 import com.example.demo.model.persistence.User;
+import com.example.demo.model.persistence.repositories.CartRepository;
 import com.example.demo.model.persistence.repositories.UserRepository;
+import com.example.demo.model.requests.CreateUserRequest;
 
 public class UserControllerTest {
-    // https://stackoverflow.com/questions/473401/get-name-of-currently-executing-test-in-junit-4
-    @Rule
-    public TestName testName = new TestName();
 
-    private UserController userControllerTest = new UserController();
+    private UserController userController;
+    private BCrypt bCrypt;
 
-    // This method must be public and static
-    @BeforeClass
-    public static void initClass() {
-        System.out.println("");
-        System.out.println("###########################");
-        System.out.println("### init Class executed ###");
-    }
-    @AfterClass
-    public static void teardownclass() {
-        System.out.println("### teardown Class executed ###");
-        System.out.println("###############################");
-        System.out.println("");
-    }
+    // mock object
+    private UserRepository userRepo = mock(UserRepository.class);
+    private CartRepository cartRepo = mock(CartRepository.class);
+    private BCryptPasswordEncoder encoder1 = mock(BCryptPasswordEncoder.class);
+    private BCrypt encoder2 = mock(BCrypt.class);
 
     @Before
-    public void init() {
-        System.out.println("init executed: " + testName.getMethodName()); }
-    @After
-    public void teardown() {
-        System.out.println("teardown executed: " + testName.getMethodName());
-        System.out.println("---");
+    public void setUp(){
+        userController = new UserController();
+        TestUtils.injectObjects(userController, "userRepository", userRepo);
+        TestUtils.injectObjects(userController, "cartRepository", cartRepo);
+        TestUtils.injectObjects(userController, "bCryptPasswordEncoder", encoder1);
+        TestUtils.injectObjects(userController, "bCrypt", encoder2);
     }
 
     @Test
-    public void test(){
-        System.out.println("test");
-    }
-//    @Test
-//    public void findByIdTest(){
-//        //UserRepository userRepository = new UserRepository();
-//        User userTest = new User();
-//        userTest.setId(Long.valueOf(77));
-//        ResponseEntity<User> resultTest = userControllerTest.findById(Long.valueOf(77));
-//        System.out.println(resultTest);
-//        assertNotNull(resultTest);
-//    }
+    public void create_user_happy_path() throws Exception {
+        when(encoder1.encode("testPassword")).thenReturn("thisIsHashed");
 
+        /**
+         * Also, this error might show up because:
+         * 1. you stub either of: final/private/equals()/hashCode() methods.
+         *    Those methods *cannot* be stubbed/verified.
+         *    Mocking methods declared on non-public parent classes is not supported.
+         * 2. inside when() you don't call method on mock but on some other object.
+         */
+        //when(encoder2.hashpw("testPW", encoder2.gensalt())).thenReturn("thisIsHashed");
+
+        CreateUserRequest userRequest = new CreateUserRequest();
+        userRequest.setUsername("test");
+        userRequest.setPassword("testPassword");
+        userRequest.setConfirmPassword("testPassword");
+
+        final ResponseEntity<User> response = userController.createUser(userRequest);
+        assertNotNull(response);
+        assertEquals(200, response.getStatusCodeValue());
+
+        User u = response.getBody();
+        assertNotNull(u);
+        assertEquals(0, u.getId());
+        assertEquals("test", u.getUsername());
+        assertEquals("thisIsHashed", u.getPassword());
+    }
 
 }
