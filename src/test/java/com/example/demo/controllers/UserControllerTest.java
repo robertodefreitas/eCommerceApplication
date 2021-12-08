@@ -45,6 +45,10 @@ public class UserControllerTest {
         System.out.println("---");
     }
 
+    @Test
+    public void test(){
+        System.out.println("test");
+    }
 //    @Test
 //    public void findByIdTest(){
 //        //UserRepository userRepository = new UserRepository();
