@@ -56,6 +56,7 @@ public class UserControllerTest {
         //when(encoder2.hashpw("testPW", encoder2.gensalt())).thenReturn("thisIsHashed");
 
         CreateUserRequest userRequest = new CreateUserRequest();
+
         userRequest.setUsername("test");
         userRequest.setPassword("testPassword");
         userRequest.setConfirmPassword("testPassword");
@@ -65,10 +66,11 @@ public class UserControllerTest {
         assertEquals(200, response.getStatusCodeValue());
 
         User u = response.getBody();
+        String pwSalt = bCrypt.hashpw("testPassword",u.getSalt());
         assertNotNull(u);
         assertEquals(0, u.getId());
         assertEquals("test", u.getUsername());
-        assertEquals("thisIsHashed", u.getPassword());
+        assertEquals(pwSalt, u.getPassword());
     }
 
 }

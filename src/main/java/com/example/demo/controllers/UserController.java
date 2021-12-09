@@ -57,6 +57,7 @@ public class UserController {
 		cartRepository.save(cart);
 		user.setCart(cart);
 
+
 		/**
 		 * From video ND035 C04 L01 A06.2
 		 * P4-L1-12
@@ -71,14 +72,30 @@ public class UserController {
 		 * bCrypt hash work with salt and the cipher text (password)
 		 * https://stackoverflow.com/questions/6832445/how-can-bcrypt-have-built-in-salts
 		 */
-		user.setPassword(bCryptPasswordEncoder.encode(createUserRequest.getPassword()));
+		//user.setSalt(bCryptPasswordEncoder.getSalt()); // wrong, because getSalt is private
+		//user.setPassword(bCryptPasswordEncoder.encode(createUserRequest.getPassword()));
+
 
 		/**
 		 * to generate a hash with extern salt
 		 * it works, but with the mock test dont work
 		 */
 		user.setSalt(bCrypt.gensalt());
-		//user.setPassword(bCrypt.hashpw(createUserRequest.getPassword(),user.getSalt()));
+		user.setPassword(bCrypt.hashpw(createUserRequest.getPassword(),user.getSalt()));
+
+		// OR Alternativ
+		/*
+		class cryptPassword {
+			void genSalt() {
+				//User user = new User();
+				//CreateUserRequest createUserRequest = new CreateUserRequest();
+				user.setSalt(bCrypt.gensalt());
+				user.setPassword(bCrypt.hashpw(createUserRequest.getPassword(), user.getSalt()));
+			}
+		}
+		new cryptPassword().genSalt();
+		*/
+
 
 		/**
 		 * Created to see the values
@@ -92,5 +109,5 @@ public class UserController {
 		userRepository.save(user);
 		return ResponseEntity.ok(user);
 	}
-	
+
 }
