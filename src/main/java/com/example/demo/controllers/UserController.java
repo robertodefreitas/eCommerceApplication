@@ -1,5 +1,7 @@
 package com.example.demo.controllers;
 
+//import org.apache.log4j.PropertyConfigurator;
+//import org.apache.log4j.Logger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +30,7 @@ public class UserController {
 	 * From video ND035 C04 L03 A05
 	 * P4-L2-10
 	 */
-	private static final Logger log = LoggerFactory.getLogger(UserController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
 	@Autowired
 	private UserRepository userRepository;
@@ -59,9 +61,10 @@ public class UserController {
 	
 	@PostMapping("/create")
 	public ResponseEntity<User> createUser(@RequestBody CreateUserRequest createUserRequest) {
+
 		User user = new User();
 		user.setUsername(createUserRequest.getUsername());
-		log.info("User name set with {}", createUserRequest.getUsername());
+		LOGGER.info("User name set with {}", createUserRequest.getUsername());
 
 		Cart cart = new Cart();
 		cartRepository.save(cart);
@@ -74,7 +77,7 @@ public class UserController {
 		 */
 		if(createUserRequest.getPassword().length() < 7 ||
 			!createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())){
-			log.error("Error with user password. Cannot create user {}", createUserRequest.getUsername());
+			LOGGER.error("Error with user password. Cannot create user {}", createUserRequest.getUsername());
 			return ResponseEntity.badRequest().build();
 		}
 
@@ -92,6 +95,9 @@ public class UserController {
 		 */
 		user.setSalt(bCrypt.gensalt());
 		user.setPassword(bCrypt.hashpw(createUserRequest.getPassword(),user.getSalt()));
+		LOGGER.info("Hash with salt is generated (bCrypt)");
+		LOGGER.info("NO_DEBUG: Generated salt: {} | User: {}", user.getSalt(), user.getUsername());
+		LOGGER.debug("Generated salt: {} | User: {}", user.getSalt(), user.getUsername());
 
 		// OR Alternativ
 		/*
@@ -108,7 +114,7 @@ public class UserController {
 
 
 		/**
-		 * Created to see the values
+		 * Created to see the values (no logs)
 		 * robertodefreitas
 		 */
 		System.out.println("### user.getUsername: " + user.getUsername());

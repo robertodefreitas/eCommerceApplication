@@ -1,6 +1,5 @@
 package com.example.demo;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -28,7 +27,6 @@ public class SareetaApplication {
 	public BCrypt bCrypt(){
 		return new BCrypt();
 	}
-
 
 	public static void main(String[] args) {
 		SpringApplication.run(SareetaApplication.class, args);
