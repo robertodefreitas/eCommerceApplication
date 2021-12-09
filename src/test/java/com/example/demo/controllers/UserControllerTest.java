@@ -44,8 +44,8 @@ import com.example.demo.model.requests.CreateUserRequest;
 //@RunWith(SpringRunner.class) //jUnit4 mechanism, JUnit5 support comes out of the box
 //@WebMvcTest(UserController.class)
 //@SpringBootTest
-@ContextConfiguration
-@WebAppConfiguration
+//@ContextConfiguration
+//@WebAppConfiguration
 public class UserControllerTest {
 
     private UserController userController;
@@ -57,10 +57,16 @@ public class UserControllerTest {
     private BCryptPasswordEncoder encoder1 = mock(BCryptPasswordEncoder.class);
     private BCrypt encoder2 = mock(BCrypt.class);
 
-    @Autowired
-    private WebApplicationContext webApplicationContext;
-
-    private MockMvc mockMvc;
+    /**
+     * https://docs.spring.io/spring-security/site/docs/4.0.x/reference/htmlsingle/#test-mockmvc-securitycontextholder-rpp
+     * https://docs.spring.io/spring-security/site/docs/4.0.x/reference/htmlsingle/#test-mockmvc
+     * https://reflectoring.io/spring-boot-web-controller-test/
+     * https://www.baeldung.com/spring-security-integration-tests
+     */
+//    @Autowired
+//    private WebApplicationContext webApplicationContext;
+//
+//    private MockMvc mockMvc;
 
 
     @Before
@@ -127,11 +133,13 @@ public class UserControllerTest {
 //        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
 //        this.mockMvc.perform(post("/login").accept(MediaType.ALL)).andExpect(status().isOk());
 
+
 //        // http://techdive.in/solutions/how-mock-securitycontextholder-perfrom-junit-tests-spring-controller
 //        User user = new User();
 //        Authentication auth = new UsernamePasswordAuthenticationToken(user,null);
 //        SecurityContextHolder.getContext().setAuthentication(auth);
 
+        
         ResponseEntity<User> response2 = userController.findByUserName(userRequest.getUsername());
         assertNotNull(response2);
         assertEquals(200, response2.getStatusCodeValue());
