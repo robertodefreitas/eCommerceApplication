@@ -44,7 +44,7 @@ public class UserControllerTest {
 
     @Test
     public void create_user_happy_path() throws Exception {
-        when(encoder1.encode("testPassword")).thenReturn("thisIsHashed");
+        //when(encoder1.encode("testPassword")).thenReturn("thisIsHashed");
 
         /**
          * Also, this error might show up because:
@@ -57,20 +57,39 @@ public class UserControllerTest {
 
         CreateUserRequest userRequest = new CreateUserRequest();
 
-        userRequest.setUsername("test");
-        userRequest.setPassword("testPassword");
-        userRequest.setConfirmPassword("testPassword");
+        userRequest.setUsername("userTest");
+        userRequest.setPassword("passwordTest");
+        userRequest.setConfirmPassword("passwordTest");
 
         final ResponseEntity<User> response = userController.createUser(userRequest);
         assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
 
-        User u = response.getBody();
-        String pwSalt = bCrypt.hashpw("testPassword",u.getSalt());
-        assertNotNull(u);
-        assertEquals(0, u.getId());
-        assertEquals("test", u.getUsername());
-        assertEquals(pwSalt, u.getPassword());
+        User user = response.getBody();
+        String pwSalt = bCrypt.hashpw("passwordTest",user.getSalt());
+        assertNotNull(user);
+        assertEquals(0, user.getId());
+        assertEquals("userTest", user.getUsername());
+        assertEquals(pwSalt, user.getPassword());
+        //assertEquals("thisIsHashed", u.getPassword());
+    }
+
+    @Test
+    public void check_username() throws Exception {
+        //when(encoder1.encode("testPassword")).thenReturn("thisIsHashed");
+        CreateUserRequest userRequest = new CreateUserRequest();
+
+        userRequest.setUsername("userTest");
+        userRequest.setPassword("passwordTest");
+        userRequest.setConfirmPassword("passwordTest");
+
+        ResponseEntity<User> response = userController.createUser(userRequest);
+        assertNotNull(response);
+        assertEquals(200, response.getStatusCodeValue());
+
+        response = userController.findByUserName(userRequest.getUsername());
+        assertNotNull(response);
+        assertEquals(200, response.getStatusCodeValue());
     }
 
 }
