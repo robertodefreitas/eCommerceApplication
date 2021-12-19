@@ -48,6 +48,7 @@ public class UserController {
 	@Autowired
 	private BCrypt bCrypt;
 
+	// findById is implemented by interface CrudRepository.class
 	@GetMapping("/id/{id}")
 	public ResponseEntity<User> findById(@PathVariable Long id) {
 		return ResponseEntity.of(userRepository.findById(id));
