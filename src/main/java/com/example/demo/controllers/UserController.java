@@ -5,7 +5,7 @@ package com.example.demo.controllers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +22,8 @@ import com.example.demo.model.requests.CreateUserRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
+import ch.qos.logback.classic.Level;
+
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
@@ -30,7 +32,8 @@ public class UserController {
 	 * From video ND035 C04 L03 A05
 	 * P4-L2-10
 	 */
-	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
 
 	@Autowired
 	private UserRepository userRepository;
@@ -65,7 +68,7 @@ public class UserController {
 
 		User user = new User();
 		user.setUsername(createUserRequest.getUsername());
-		LOGGER.info("User name set with {}", createUserRequest.getUsername());
+		logger.info("User name set with {}", createUserRequest.getUsername());
 
 		Cart cart = new Cart();
 		cartRepository.save(cart);
@@ -78,7 +81,7 @@ public class UserController {
 		 */
 		if(createUserRequest.getPassword().length() < 7 ||
 			!createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())){
-			LOGGER.error("Error with user password. Cannot create user {}", createUserRequest.getUsername());
+			logger.error("Error with user password. Cannot create user {}", createUserRequest.getUsername());
 			return ResponseEntity.badRequest().build();
 		}
 
@@ -96,9 +99,10 @@ public class UserController {
 		 */
 		user.setSalt(bCrypt.gensalt());
 		user.setPassword(bCrypt.hashpw(createUserRequest.getPassword(),user.getSalt()));
-		LOGGER.info("Hash with salt is generated (bCrypt)");
-		LOGGER.info("NO_DEBUG: Generated salt: {} | User: {}", user.getSalt(), user.getUsername());
-		LOGGER.debug("Generated salt: {} | User: {}", user.getSalt(), user.getUsername());
+		logger.info("Hash with salt is generated (bCrypt)");
+		logger.info("[INFO] Generated salt: {} | User: {}", user.getSalt(), user.getUsername());
+		// no possible to see the DEBUG logs
+		logger.debug("[DEBUG] Generated salt: {} | User: {}", user.getSalt(), user.getUsername());
 
 		// OR Alternativ
 		/*
@@ -118,10 +122,10 @@ public class UserController {
 		 * Created to see the values (no logs)
 		 * robertodefreitas
 		 */
-		System.out.println("### user.getUsername: " + user.getUsername());
-		System.out.println("### createUserRequest.getPassword: " + createUserRequest.getPassword());
-		System.out.println("### user.getPassword: " + user.getPassword());
-		System.out.println("### user.getSalt: " + user.getSalt());
+//		System.out.println("### user.getUsername: " + user.getUsername());
+//		System.out.println("### createUserRequest.getPassword: " + createUserRequest.getPassword());
+//		System.out.println("### user.getPassword: " + user.getPassword());
+//		System.out.println("### user.getSalt: " + user.getSalt());
 
 		userRepository.save(user);
 		return ResponseEntity.ok(user);
