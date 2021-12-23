@@ -1,8 +1,12 @@
 package com.example.demo.model.requests;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ModifyCartRequest {
+
+	private static final Logger logger = LoggerFactory.getLogger(ModifyCartRequest.class);
 	
 	@JsonProperty
 	private String username;

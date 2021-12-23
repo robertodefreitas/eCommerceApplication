@@ -16,11 +16,15 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "user_order")
 public class UserOrder {
+
+	private static final Logger logger = LoggerFactory.getLogger(UserOrder.class);
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,9 +54,7 @@ public class UserOrder {
 		this.id = id;
 	}
 
-	public List<Item> getItems() {
-		return items;
-	}
+	public List<Item> getItems() { return items; }
 
 	public void setItems(List<Item> items) {
 		this.items = items;

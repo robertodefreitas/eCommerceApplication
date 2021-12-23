@@ -11,12 +11,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "item")
 public class Item {
+
+	private static final Logger logger = LoggerFactory.getLogger(Item.class);
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,10 +73,14 @@ public class Item {
 	}
 
 	public String getName() {
+		String thisMethode = new Object(){}.getClass().getEnclosingMethod().getName();
+		logger.debug("[{}] Value: {}", thisMethode, name);
 		return name;
 	}
 
 	public void setName(String name) {
+		String thisMethode = new Object(){}.getClass().getEnclosingMethod().getName();
+		logger.debug("[{}] Value: {}", thisMethode, name);
 		this.name = name;
 	}
 

@@ -1,8 +1,13 @@
 package com.example.demo.model.requests;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.example.demo.controllers.UserController;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class CreateUserRequest {
+
+	private static final Logger logger = LoggerFactory.getLogger(CreateUserRequest.class);
 
 	@JsonProperty
 	private String username;
