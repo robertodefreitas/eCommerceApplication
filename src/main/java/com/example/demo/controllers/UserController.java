@@ -64,7 +64,12 @@ public class UserController {
 		String thisMethode = new Object(){}.getClass().getEnclosingMethod().getName();
 		logger.info("[{}] Mapping: /api/user/{}", thisMethode, username);
 
-		return user == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(user);
+		//return user == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(user);
+		if(user == null) {
+			logger.warn("[{}] Username is not available.", thisMethode);
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok(user);
 	}
 	
 	@PostMapping("/create")
@@ -73,7 +78,13 @@ public class UserController {
 		user.setUsername(createUserRequest.getUsername());
 
 		String thisMethode = new Object(){}.getClass().getEnclosingMethod().getName();
+
 		logger.info("[{}] Mapping: /api/user/create, Username: {}", thisMethode, createUserRequest.getUsername());
+
+		if(createUserRequest.getUsername() == "") {
+			logger.warn("[{}] Username is not available.", thisMethode);
+			return ResponseEntity.notFound().build();
+		}
 
 		Cart cart = new Cart();
 		cartRepository.save(cart);

@@ -4,6 +4,9 @@
 *.iml
 *.ipr
 
+### LOGFILES
+logs/
+
 ## Maven Project
 target/
 pom.xml.tag
